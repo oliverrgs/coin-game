@@ -1,118 +1,89 @@
-# Lazy Susan Coin Game Simulator
+# 🎠 Lazy Susan Coin Game
 
-A Python simulator for the fascinating Lazy Susan coin puzzle game, complete with multiple game modes and AI demonstrations of optimal strategies.
+A strategic puzzle game where you must get all coins to show the same face (all heads or all tails) by examining cups and flipping coins strategically.
 
-## Game Rules
+## 🎯 Game Rules
 
-You are shown a Lazy Susan with four upside-down red solo cups arranged in a square. Under each cup is a coin showing either heads (H) or tails (T). The coins start in a random arrangement where not all are the same.
+### Setup
+- Four upside-down red solo cups are arranged in a square on a Lazy Susan
+- Under each cup is a coin (random arrangement of heads/tails, not all the same)
+- Goal: Get all coins to be all heads or all tails
 
-**Goal**: Get all coins to show the same side (all heads or all tails).
+### Gameplay
+1. **Select Cups**: Click on two cups to select them for examination
+2. **Examine Cups**: Click "Examine Selected Cups" to see what's underneath
+3. **Cups Become Locked**: Once examined, cups cannot be deselected
+4. **Flip Individual Coins**: Click on any examined cup to flip its coin
+5. **Spin Lazy Susan**: When ready, spin to check if you've won and reset the game
 
-**Each Turn**:
-1. The Lazy Susan spins (you can't know which cup is which)
-2. You select two cups to examine
-3. You can see the coins under those cups
-4. You can flip 0, 1, or both of those coins
-5. The cups are covered again and the process repeats
+### Key Mechanics
+- **Examination Phase**: Select 2 cups, examine them to see coin values
+- **Flipping Phase**: Click examined cups to flip individual coins (no turn cost)
+- **Spinning Phase**: Spin the Lazy Susan to check win condition and reset
+- **Turn Counting**: Turns only increment when spinning the Lazy Susan
+- **Win Condition**: All coins must be the same (checked only when spinning)
 
-## How to Play
+### Winning
+- You win when all 4 coins show the same face (all heads or all tails)
+- Win condition is only checked when you spin the Lazy Susan
+- You have 50 spins to achieve victory
 
-### Basic Game
-```bash
-python coin_game_simulator.py
-```
+## 🧠 Optimal Strategy
 
-### Advanced Features
-```bash
-python advanced_coin_game.py
-```
+### Guaranteed Win in ≤4 Spins
 
-The advanced version includes:
-- Human play mode (can see coins)
-- Blind play mode (cannot see coins)
-- AI demonstration of optimal strategy
-- AI demonstration of random strategy
-- Strategy analysis
+1. **Consistent Cup Selection**: Always choose cups in the same pattern (e.g., always adjacent)
+2. **Strategic Flipping**: 
+   - If you see two different coins, flip one to make them the same
+   - If you see two same coins, don't flip them
+3. **Multiple Attempts**: You can flip coins multiple times before spinning
+4. **Systematic Approach**: Use the same cup selection pattern each time
 
-## Optimal Strategy
-
-**The optimal strategy guarantees a win in at most 4 turns:**
-
-1. **Always choose cups in a consistent pattern** (e.g., always choose adjacent cups)
-2. **If you see two different coins**, flip one to make them the same
-3. **If you see two same coins**, don't flip them
-
-**Why this works:**
-- By choosing the same pattern each time, you eventually see all coins
-- Making pairs the same creates a "snowball effect"
+### Why This Works
+- With only 4 coins, you'll see all of them within 4 spins
+- Making pairs the same creates a 'snowball effect'
 - The strategy is deterministic and guaranteed to succeed
+- You can experiment with different coin arrangements before spinning
 
-## Blind Variant Strategy
+## 🎮 How to Play
 
-Even if you can't see the coins, you can still guarantee a win:
+1. **Start the Game**: Run `python coin_game_gui.py`
+2. **Select Two Cups**: Click on any two cups to select them
+3. **Examine Cups**: Click "Examine Selected Cups" button
+4. **See Coin Values**: Cups now show their coin values and become locked
+5. **Flip Coins**: Click on examined cups to flip individual coins
+6. **Spin When Ready**: Click "Spin Lazy Susan" to check for victory
+7. **Repeat**: Continue until you win or reach 50 spins
 
-1. **Always choose cups in a consistent pattern**
-2. **Always flip exactly one coin** (creates pairs)
-3. **This also guarantees a win in ≤4 turns!**
+## 🎨 Game Features
 
-## Mathematical Proof
+- **Visual Feedback**: Different colors for selected, examined, and normal cups
+- **Real-time Updates**: See coin values change immediately after flipping
+- **Turn Counter**: Track your progress toward the 50-spin limit
+- **Strategy Hints**: Built-in strategy guide for optimal play
+- **New Game**: Start fresh anytime with the New Game button
 
-The optimal strategy works because:
-- There are only 4 coins, so you'll see all of them within 4 turns
-- Making pairs the same increases the probability of winning
-- The strategy is memoryless and doesn't require tracking previous states
+## 🚀 Getting Started
 
-## Game Modes
-
-1. **Human Play**: You can see the coins and make informed decisions
-2. **Blind Play**: You cannot see the coins - pure strategy game
-3. **Optimal AI**: Watch the AI demonstrate the optimal strategy
-4. **Random AI**: Watch the AI use random moves (much less effective)
-
-## Example Game Flow
-
-```
-Turn 1: Choose cups 1 & 2, see H & T, flip one → H & H
-Turn 2: Choose cups 1 & 2, see H & H, no flip needed
-Turn 3: Choose cups 1 & 2, see H & H, no flip needed
-Turn 4: Choose cups 1 & 2, see H & H, no flip needed
-WIN! All coins are heads
+```bash
+# Make sure you have Python installed
+python coin_game_gui.py
 ```
 
-## Why Random Strategy Fails
+## 🎯 Tips for Success
 
-A random strategy has no guarantee of winning because:
-- You might never see all coins
-- Random flips can undo progress
-- No systematic approach to creating pairs
+- **Be Patient**: Take your time to get the coins right before spinning
+- **Plan Ahead**: Think about which cups to examine next
+- **Learn Patterns**: Notice how your choices affect the game state
+- **Practice**: The more you play, the better you'll understand the strategy
 
-## Educational Value
+## 🔧 Technical Details
 
-This game demonstrates:
-- **Deterministic vs. probabilistic strategies**
-- **Information theory** (what you can and cannot know)
-- **Game theory** (optimal decision making)
-- **Algorithm design** (guaranteed solutions)
+- Built with Python and Tkinter
+- Cross-platform compatibility
+- Responsive GUI with intuitive controls
+- Debug logging for troubleshooting
 
-## Requirements
+---
 
-- Python 3.6+
-- No external dependencies (uses only standard library)
-
-## Running the Simulator
-
-1. Download the Python files
-2. Open a terminal/command prompt
-3. Navigate to the directory containing the files
-4. Run `python advanced_coin_game.py`
-5. Choose your game mode and enjoy!
-
-## Strategy Challenge
-
-Try to:
-1. Win the game in the fewest turns possible
-2. Develop your own strategy and compare it to the optimal one
-3. Understand why the blind variant strategy works
-4. Analyze what information is actually needed to guarantee a win
-
-This game is a perfect example of how mathematical thinking can turn an apparently random puzzle into a solvable problem with a guaranteed solution!
+**Good luck! Can you solve the Lazy Susan puzzle in the fewest spins possible?** 🎉
