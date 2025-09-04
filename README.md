@@ -45,6 +45,26 @@ A strategic puzzle game where you must get all coins to show the same face (all 
 - The strategy is deterministic and guaranteed to succeed
 - You can experiment with different coin arrangements before spinning
 
+## 😈 Malicious Mode
+
+### What It Does
+When enabled, the game actively works against you by rotating the Lazy Susan to give you the worst possible state:
+
+- **3+ of Same Type**: If there are 3+ heads or tails, the Lazy Susan rotates so your selected cups show 2 of that type
+- **2 of Each**: If there are 2 heads and 2 tails, the Lazy Susan rotates so your selected cups show 1 head and 1 tail
+- **Active Sabotage**: The game literally moves the coins around to make your life harder
+
+### Challenge Level
+- **Normal Mode**: Guaranteed win in ≤4 spins with optimal strategy
+- **Malicious Mode**: Much harder! The game actively prevents you from seeing helpful combinations
+- **Persistent**: Malicious mode stays enabled across new games until you disable it
+
+### Strategy in Malicious Mode
+- **Adaptive Approach**: You can't rely on the same systematic strategy
+- **Multiple Spins**: You'll likely need more spins to win
+- **Risk Assessment**: Sometimes you must spin without seeing optimal combinations
+- **Pattern Recognition**: Learn to work around the malicious interference
+
 ## 🎮 How to Play
 
 1. **Start the Game**: Run `python coin_game_gui.py`
@@ -62,6 +82,7 @@ A strategic puzzle game where you must get all coins to show the same face (all 
 - **Turn Counter**: Track your progress toward the 50-spin limit
 - **Strategy Hints**: Built-in strategy guide for optimal play
 - **New Game**: Start fresh anytime with the New Game button
+- **😈 Malicious Mode**: Optional challenge mode where the game actively works against you
 
 ## 🚀 Getting Started
 

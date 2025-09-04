@@ -18,6 +18,7 @@ class CoinGameGUI:
         self.selected_cups = []
         self.game_active = False
         self.cups_examined = set()  # Track which cups have been examined
+        self.malicious_mode = False  # Track if malicious mode is enabled
         
         # Colors
         self.colors = {
@@ -60,15 +61,6 @@ class CoinGameGUI:
             fg=self.colors['text']
         )
         self.turn_label.pack()
-        
-        self.mode_label = tk.Label(
-            info_frame,
-            text="Mode: Human Play",
-            font=('Arial', 12),
-            bg=self.colors['bg'],
-            fg=self.colors['text']
-        )
-        self.mode_label.pack()
         
         # Cups display
         cups_frame = tk.Frame(self.root, bg=self.colors['bg'])
@@ -198,6 +190,18 @@ class CoinGameGUI:
         )
         self.new_game_btn.pack(side=tk.LEFT, padx=10)
         
+        self.malicious_btn = tk.Button(
+            control_frame,
+            text="Enable Puzzle Mode",
+            font=('Arial', 12, 'bold'),
+            bg='#e74c3c',
+            fg=self.colors['text'],
+            relief='raised',
+            bd=2,
+            command=self.toggle_malicious_mode
+        )
+        self.malicious_btn.pack(side=tk.LEFT, padx=10)
+        
         self.strategy_btn = tk.Button(
             control_frame,
             text="Strategy Hint",
@@ -231,6 +235,7 @@ class CoinGameGUI:
         self.selected_cups = []
         self.game_active = True
         self.cups_examined = set()  # Reset examined cups
+        # Note: malicious_mode is NOT reset - it persists across games
         
         self.update_display()
         self.hide_flip_options()
@@ -238,7 +243,6 @@ class CoinGameGUI:
     def update_display(self):
         """Update the display"""
         self.turn_label.config(text=f"Turn: {self.turn_count + 1}/{self.max_turns}")
-        self.mode_label.config(text=f"Mode: {'Blind' if self.game_mode == 'blind' else 'Human'} Play")
         
         # Update cup buttons
         for i, btn in enumerate(self.cup_buttons):
@@ -303,12 +307,18 @@ class CoinGameGUI:
         print(f"DEBUG: examine_cups called with selected_cups: {self.selected_cups}")
         print(f"DEBUG: game_mode: {self.game_mode}")
         print(f"DEBUG: game_active: {self.game_active}")
+        print(f"DEBUG: malicious_mode: {self.malicious_mode}")
         
         if len(self.selected_cups) != 2:
             print(f"DEBUG: Wrong number of cups selected: {len(self.selected_cups)}")
             return
+        
+        # In malicious mode, the game will rotate the coins to give you the worst possible state
+        if self.malicious_mode:
+            self.perform_malicious_rotation()
+            print(f"DEBUG: Puzzle mode rotated coins to: {self.coins}")
             
-        # Mark these cups as examined
+        # Mark the selected cups as examined (no interference with selection in malicious mode)
         self.cups_examined.update(self.selected_cups)
         
         if self.game_mode == 'blind':
@@ -397,6 +407,80 @@ class CoinGameGUI:
         
         # Update display to show new coin value
         self.update_display()
+    
+    def perform_malicious_rotation(self):
+        """Rotate the entire Lazy Susan to give the player the worst possible state"""
+        # Count current coin distribution
+        heads_count = self.coins.count('H')
+        tails_count = self.coins.count('T')
+        
+        print(f"DEBUG: Puzzle rotation - Current coins: {self.coins}, H:{heads_count}, T:{tails_count}")
+        
+        # Puzzle rotation logic: rotate the entire 2x2 grid to give worst possible state
+        # The coins stay in their relative positions, but the whole grid rotates
+        
+        # Try different rotations (0°, 90°, 180°, 270°) to find the worst one
+        best_rotation = 0  # 0° = no rotation
+        worst_score = float('inf')  # Lower is worse for the player
+        
+        for rotation in range(4):  # 0, 1, 2, 3 rotations of 90°
+            rotated_coins = self.rotate_coins(self.coins, rotation)
+            
+            # Calculate how bad this rotation is for the player
+            score = self.calculate_malicious_score(rotated_coins, self.selected_cups)
+            
+            if score < worst_score:
+                worst_score = score
+                best_rotation = rotation
+        
+        # Apply the worst rotation
+        self.coins = self.rotate_coins(self.coins, best_rotation)
+        print(f"DEBUG: Puzzle rotation completed - Applied {best_rotation * 90}° rotation, new coins: {self.coins}")
+    
+    def rotate_coins(self, coins, rotations):
+        """Rotate the 2x2 grid of coins by the given number of 90° rotations"""
+        # Coins are arranged as: [0, 1, 2, 3] representing:
+        # 0 1
+        # 2 3
+        
+        if rotations == 0:
+            return coins.copy()
+        elif rotations == 1:  # 90° clockwise
+            return [coins[2], coins[0], coins[3], coins[1]]
+        elif rotations == 2:  # 180°
+            return [coins[3], coins[2], coins[1], coins[0]]
+        elif rotations == 3:  # 270° clockwise (90° counterclockwise)
+            return [coins[1], coins[3], coins[0], coins[2]]
+    
+    def calculate_malicious_score(self, coins, selected_cups):
+        """Calculate how bad this coin arrangement is for the player (lower = worse)"""
+        selected_coins = [coins[i] for i in selected_cups]
+        
+        # Count heads and tails in selected cups
+        heads_in_selected = selected_coins.count('H')
+        tails_in_selected = selected_coins.count('T')
+
+        total_tails = coins.count('T')
+        total_heads = coins.count('H')  
+        
+        # Score based on how unhelpful this combination is
+        if (total_tails == 3 and tails_in_selected == 2) or (total_heads == 3 and heads_in_selected == 2):
+            # Two heads - bad if player wants all tails
+            return 1
+        elif (total_tails == 2 and heads_in_selected == 1):
+            # Two tails - bad if player wants all heads
+            return 1
+        else:
+            # Mixed or other combinations
+            return 3
+    
+    def get_malicious_cup_selection(self):
+        """Get malicious cup selection that works against the player"""
+        # In malicious mode, we'll actually rotate the coins to give the worst state
+        # This method now returns the cups to show, but the real work happens in examine_cups
+        
+        # For now, just return the selected cups - the malicious rotation happens separately
+        return self.selected_cups.copy()
                 
     def check_win_condition(self):
         """Check if all coins are the same"""
@@ -427,7 +511,7 @@ class CoinGameGUI:
             
         self.status_label.config(text="🎠 Spinning the Lazy Susan...")
         self.root.update()
-        time.sleep(1)
+        time.sleep(0.3)  # Reduced from 1 second to 0.3 seconds
         
         # Check win condition before resetting
         if self.check_win_condition():
@@ -467,6 +551,21 @@ class CoinGameGUI:
             self.mode_btn.config(text="Switch to Blind Mode")
             
         # Reset examined cups when switching modes
+        self.cups_examined = set()
+        self.update_display()
+    
+    def toggle_malicious_mode(self):
+        """Toggle malicious mode on/off"""
+        self.malicious_mode = not self.malicious_mode
+        
+        if self.malicious_mode:
+            self.malicious_btn.config(text="Disable Puzzle Mode", bg='#27ae60')
+            self.status_label.config(text="😈 MALICIOUS MODE ENABLED! The game will actively work against you!")
+        else:
+            self.malicious_btn.config(text="Enable Puzzle Mode", bg='#e74c3c')
+            self.status_label.config(text="Puzzle mode disabled. Normal gameplay restored.")
+        
+        # Reset examined cups when toggling modes
         self.cups_examined = set()
         self.update_display()
         
