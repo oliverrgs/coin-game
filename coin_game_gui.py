@@ -111,7 +111,8 @@ class CoinGameGUI:
             fg=self.colors['text'],
             relief='raised',
             bd=2,
-            command=self.spin_lazy_susan
+            command=self.spin_lazy_susan,
+            state='disabled'  # Initially disabled until cups are examined
         )
         self.spin_btn.pack(side=tk.LEFT, padx=10)
         
@@ -237,6 +238,10 @@ class CoinGameGUI:
         self.cups_examined = set()  # Reset examined cups
         # Note: malicious_mode is NOT reset - it persists across games
         
+        # Reset button states for new game
+        self.examine_btn.config(state='disabled')  # Disable examine until 2 cups selected
+        self.spin_btn.config(state='disabled')     # Disable spin until cups examined
+        
         self.update_display()
         self.hide_flip_options()
         
@@ -347,7 +352,8 @@ class CoinGameGUI:
             print(f"DEBUG: Error packing flip_frame: {e}")
             
         self.examine_btn.config(state='disabled')
-        print("DEBUG: examine_btn disabled")
+        self.spin_btn.config(state='normal')  # Enable spin button after examine
+        print("DEBUG: examine_btn disabled, spin_btn enabled")
         
     def hide_flip_options(self):
         """Hide the flip options"""
@@ -531,6 +537,11 @@ class CoinGameGUI:
             self.hide_flip_options()
         except Exception as e:
             print(f"DEBUG: Error in spin_lazy_susan when hiding flip options: {e}")
+        
+        # Reset button states for next round
+        self.examine_btn.config(state='disabled')  # Disable examine until 2 cups selected
+        self.spin_btn.config(state='disabled')     # Disable spin until cups examined
+        
         self.update_display()
         
         self.status_label.config(text="The Lazy Susan has spun! Select two cups to examine.")
@@ -552,6 +563,9 @@ class CoinGameGUI:
             
         # Reset examined cups when switching modes
         self.cups_examined = set()
+        # Reset button states when switching modes
+        self.examine_btn.config(state='disabled')
+        self.spin_btn.config(state='disabled')
         self.update_display()
     
     def toggle_malicious_mode(self):
@@ -567,6 +581,9 @@ class CoinGameGUI:
         
         # Reset examined cups when toggling modes
         self.cups_examined = set()
+        # Reset button states when toggling modes
+        self.examine_btn.config(state='disabled')
+        self.spin_btn.config(state='disabled')
         self.update_display()
         
     def show_strategy(self):
