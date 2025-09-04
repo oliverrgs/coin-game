@@ -28,42 +28,10 @@ A strategic puzzle game where you must get all coins to show the same face (all 
 - Win condition is only checked when you spin the Lazy Susan
 - You have 50 spins to achieve victory
 
-## 🧠 Optimal Strategy
 
-### Guaranteed Win in ≤4 Spins
+## 😈 Puzzle Mode
 
-1. **Consistent Cup Selection**: Always choose cups in the same pattern (e.g., always adjacent)
-2. **Strategic Flipping**: 
-   - If you see two different coins, flip one to make them the same
-   - If you see two same coins, don't flip them
-3. **Multiple Attempts**: You can flip coins multiple times before spinning
-4. **Systematic Approach**: Use the same cup selection pattern each time
-
-### Why This Works
-- With only 4 coins, you'll see all of them within 4 spins
-- Making pairs the same creates a 'snowball effect'
-- The strategy is deterministic and guaranteed to succeed
-- You can experiment with different coin arrangements before spinning
-
-## 😈 Malicious Mode
-
-### What It Does
-When enabled, the game actively works against you by rotating the Lazy Susan to give you the worst possible state:
-
-- **3+ of Same Type**: If there are 3+ heads or tails, the Lazy Susan rotates so your selected cups show 2 of that type
-- **2 of Each**: If there are 2 heads and 2 tails, the Lazy Susan rotates so your selected cups show 1 head and 1 tail
-- **Active Sabotage**: The game literally moves the coins around to make your life harder
-
-### Challenge Level
-- **Normal Mode**: Guaranteed win in ≤4 spins with optimal strategy
-- **Malicious Mode**: Much harder! The game actively prevents you from seeing helpful combinations
-- **Persistent**: Malicious mode stays enabled across new games until you disable it
-
-### Strategy in Malicious Mode
-- **Adaptive Approach**: You can't rely on the same systematic strategy
-- **Multiple Spins**: You'll likely need more spins to win
-- **Risk Assessment**: Sometimes you must spin without seeing optimal combinations
-- **Pattern Recognition**: Learn to work around the malicious interference
+When enabled, the game actively works against you by rotating the Lazy Susan to give you the worst possible state
 
 ## 🎮 How to Play
 
